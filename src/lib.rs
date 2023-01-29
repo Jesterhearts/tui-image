@@ -103,7 +103,7 @@ impl Widget for Image<'_> {
         let image = self.image.resize(
             u32::from(image_area.width),
             u32::from(image_area.height),
-            image::imageops::FilterType::Lanczos3,
+            self.filter_mode,
         );
 
         let x_start = (area.width - image.width() as u16) / 2 + image_area.left();
