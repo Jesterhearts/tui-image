@@ -21,7 +21,7 @@ use tui::{
 /// available space.
 ///
 /// No support for transparancy is provided.
-pub struct ImageWidget<'a> {
+pub struct Image<'a> {
     image: &'a DynamicImage,
     block: Option<Block<'a>>,
     style: Style,
@@ -29,9 +29,9 @@ pub struct ImageWidget<'a> {
     filter_mode: FilterType,
 }
 
-impl<'a> ImageWidget<'a> {
-    pub fn new(image: &DynamicImage) -> ImageWidget {
-        ImageWidget {
+impl<'a> Image<'a> {
+    pub fn new(image: &DynamicImage) -> Image {
+        Image {
             image,
             block: None,
             style: Style::default(),
@@ -66,7 +66,7 @@ impl<'a> ImageWidget<'a> {
     }
 }
 
-impl Widget for ImageWidget<'_> {
+impl Widget for Image<'_> {
     fn render(mut self, area: Rect, buf: &mut Buffer) {
         const HALF_BLOCK: char = '▄';
         buf.set_style(area, self.style);
@@ -81,6 +81,10 @@ impl Widget for ImageWidget<'_> {
         };
 
         let mut image_area = area;
+        if image_area.height == 0 || image_area.width == 0 {
+            return;
+        }
+
         if !self.scale_up {
             image_area.width = u32::from(area.width).min(self.image.width()) as u16;
             image_area.height = u32::from(area.height * 2).min(self.image.height()) as u16;
