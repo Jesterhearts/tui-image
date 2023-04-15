@@ -92,14 +92,6 @@ impl Widget for Image<'_> {
             image_area.height *= 2;
         }
 
-        if image_area.width % 2 == 1 {
-            image_area.width -= 1;
-        }
-
-        if image_area.height % 2 == 1 {
-            image_area.height -= 1;
-        }
-
         let image = self.image.resize(
             u32::from(image_area.width),
             u32::from(image_area.height),
@@ -114,11 +106,13 @@ impl Widget for Image<'_> {
                 let cell = buf.get_mut(x_start + x, y_start + y_actual as u16);
 
                 let bg_pixel = image.get_pixel(u32::from(x), u32::from(y_pixel));
-                let fg_pixel = image.get_pixel(u32::from(x), u32::from(y_pixel + 1));
-
                 cell.set_char(HALF_BLOCK)
-                    .set_bg(Color::Rgb(bg_pixel[0], bg_pixel[1], bg_pixel[2]))
-                    .set_fg(Color::Rgb(fg_pixel[0], fg_pixel[1], fg_pixel[2]));
+                    .set_bg(Color::Rgb(bg_pixel[0], bg_pixel[1], bg_pixel[2]));
+
+                if ((y_pixel + 1) as u32) < image.height() {
+                    let fg_pixel = image.get_pixel(u32::from(x), u32::from(y_pixel + 1));
+                    cell.set_fg(Color::Rgb(fg_pixel[0], fg_pixel[1], fg_pixel[2]));
+                }
             }
         }
     }
